@@ -1,27 +1,33 @@
 module ReportGenerator
   module Factories
-    class ReportFieldFactory
-      attr_reader :attributes
+    class ReportFieldFactory < BaseFactory
 
       def initialize
-        @attributes = {}
-        @attributes[:section_columns] = []
+        super
+        self.attributes[:section_columns] = []
+        self.attributes[:add_column] = {}
+        self.attributes[:exprs] = []
       end
 
       def section name
-        @attributes[:section] = name
+        self.attributes[:section] = name
       end
 
       def column column_name
-        @attributes[:section_columns] << column_name
+        self.attributes[:section_columns] << column_name
       end
 
       def columns *args
-        @attributes[:section_columns] += args
+        self.attributes[:section_columns] += args
       end
 
-      def method_missing(name, *args, &block)
-        @attributes[name] = args
+      def add_column key, val
+        self.attributes[:add_column] = {key => val}
+      end
+
+      def expr *args
+        self.attributes[:field_type] = :expr_field
+        self.attributes[:exprs] += args
       end
 
     end

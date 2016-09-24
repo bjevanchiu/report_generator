@@ -8,6 +8,11 @@ module ReportGenerator
         conditions.each{|x| result = result.where(x)}
         result.group(group_columns)
       end
+
+      def clear data_source, condition
+        data_source.destroy_all(condition)
+      end
+
     end
   end
 end
