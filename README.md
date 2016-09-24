@@ -1,4 +1,6 @@
-# report_generator [![Gem Version](https://badge.fury.io/rb/report_generator.png)](http://badge.fury.io/rb/report_generator)
+# report_generator
+[![Gem Version](https://badge.fury.io/rb/report_generator.png)](http://badge.fury.io/rb/report_generator)
+[![Code Climate](https://codeclimate.com/github/bjevanchiu/report_generator/badges/gpa.svg)](https://codeclimate.com/github/bjevanchiu/report_generator)
 
 A simple Ruby Internal DSL for creating  Count Report which save data from MySQL to MySQL.
 
