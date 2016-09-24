@@ -71,7 +71,7 @@ module ReportGenerator
       class_eval(&block) if block_given?
     end
 
-    def build model_type, model_name, group_name=:default, attributes = {}
+    def build model_type, model_name, attributes = {}
       model_class = ReportGenerator::Models::Report
       tmp_factory_attributes = nil
       if model_type.equal?(:sections)
@@ -93,9 +93,9 @@ module ReportGenerator
       end
     end
 
-    def build_group model_type, group_name
+    def build_group group_name
       reportfactories = group_factories[group_name].attributes[:reports]
-      reportfactories.collect do |report_name,report_factory|
+      reportfactories.collect do |_report_name, report_factory|
         tmp_factory_attributes = report_factory.attributes
 
         report_model = report_factory.attributes[:report_model]
