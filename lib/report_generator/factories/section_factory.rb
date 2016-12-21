@@ -47,18 +47,18 @@ module ReportGenerator
 
       def count *cols
         self.attributes[:select_columns] += cols.collect do |x|
-          "COUNT(#{x}) count_#{x.to_s.tr('.', '_')}"
+          "COUNT(#{x}) count_#{x.to_s.gsub('.', '_')}"
         end
       end
 
       def distinct_count *cols
         self.attributes[:select_columns] += cols.collect do |x|
-          " COUNT(DISTINCT #{x}) count_distinct_#{x.to_s.tr('.', '_')}"
+          " COUNT(DISTINCT #{x}) count_distinct_#{x.to_s.gsub('.', '_')}"
         end
       end
 
       def sum *cols
-        self.attributes[:select_columns] += cols.collect{|x| "SUM(#{x}) sum_#{x.to_s.tr('.', '_')}"}
+        self.attributes[:select_columns] += cols.collect{|x| "SUM(#{x}) sum_#{x.to_s.gsub('.', '_')}"}
       end
 
       def condition *arg, &block

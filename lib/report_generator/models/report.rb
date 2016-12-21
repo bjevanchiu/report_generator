@@ -85,7 +85,7 @@ module ReportGenerator
           if expr_ary.count > 0
             statement = expr_ary.shift
             if statement.to_s.count('?') > 0
-              merged_records.each do |init_fields, record_attrs|
+              merged_records.each do |init_fields, record_attrs|  
                 values = expr_ary.collect{|x| record_attrs[x].to_f}
                 result_val =  values[1] == 0.0 ? 0.0 : eval(replace_bind_variables(statement, values))
                 record_attrs[field_name.first] = result_val
@@ -100,13 +100,10 @@ module ReportGenerator
 
       def replace_bind_variables(statement, values) # :nodoc:
         raise_if_bind_arity_mismatch(statement, statement.count('?'), values.size)
-
         bound = values.dup
-
         statement.gsub(/\?/) do
           bound.shift
         end
-
       end
 
       def raise_if_bind_arity_mismatch(statement, expected, provided) # :nodoc:

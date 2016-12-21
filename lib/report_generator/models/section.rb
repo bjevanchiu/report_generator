@@ -21,12 +21,23 @@ module ReportGenerator
       def query_with_sql
         logger.info "Query SQL: #{@sql_statement}"
         mysql_results = @data_source.connection.execute(@sql_statement)
-        logger.info "Query Completed, Row Size: #{mysql_results.size}"
+        if mysql_results.class.to_s == "PGresult" 
+          logger.info "Query Completed, Row Size: #{mysql_results.try(:num_tuples)}"
+          return [] if mysql_results.try(:num_tuples) == 0
+        else
+          logger.info "Query Completed, Row Size: #{mysql_results.size}"
+          return [] if mysql_results.size == 0
+        end
         result_fields = mysql_results.fields
         records = mysql_results.collect do |row|
           result_row = OpenStruct.new
+
           result_fields.each_with_index do |field, index|
-            result_row.send("#{field}=", row[index])
+            if mysql_results.class.to_s == "PGresult" 
+              result_row.send("#{field}=", row[field])
+            else
+              result_row.send("#{field}=", row[index])
+            end
           end
           result_row
         end
@@ -47,9 +58,9 @@ module ReportGenerator
               template = records[0].dup
               template[k] = item[:label]
               if item[:members].blank?
-                sum = records.map(&:distinct_uid_count).compact.sum
+                sum = records.map{|x| x[:distinct_uid_count].to_f}.compact.sum
               else
-                sum = records.select{|s| item[:members].include?(s[k])}.map(&:distinct_uid_count).compact.sum
+                sum = records.select{|s| item[:members].include?(s[k])}.map{|x| x[:distinct_uid_count].to_f}.compact.sum
               end
               template[:distinct_uid_count] = sum
               t << template
@@ -77,7 +88,7 @@ module ReportGenerator
           sum_records = items.collect do |item|
             result = query(@data_source, item[:select_columns], @joins, item[:conditions], item[:group_columns])
             result.collect do |r|
-              OpenStruct.new(r.attributes.dup.merge!(item[:labels]))
+              OpenStruct.new(r.attributes.dup.delete_if{|k, v| k.nil?}.merge!(item[:labels]))
             end
           end # items.collect
           records += sum_records.flatten
